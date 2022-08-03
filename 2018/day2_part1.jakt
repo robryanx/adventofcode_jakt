@@ -1,0 +1,10 @@
+import reader
+
+function main() {
+    for boxes in reader::lines_string(day: 2).iterator() {
+        let ids = boxes.split('')
+        for id in ids.iterator() {
+            println("{}", id)
+        } 
+    }
+}

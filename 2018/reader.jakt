@@ -1,0 +1,35 @@
+function lines_int(day: i64) throws -> [i32] {
+    mut lines_int: [i32] = []
+    let lines_string = read_input(day).split('\n')
+    
+    for line in lines_string.iterator() {
+        let number = line.to_int()
+
+        if number.has_value() {
+            lines_int.push(number!)
+        }
+    }
+
+    return lines_int;
+}
+
+function lines_string(day: i64) throws -> [String] {
+    return read_input(day).split('\n')
+}
+
+function read_input(day: i64) throws -> String {
+    let path = format("input/{}", day)
+    mut file = File::open_for_reading(path)
+    
+    return bytes_to_string(file.read_all())
+}
+
+function bytes_to_string(anon bytes: [u8]) throws -> String {
+    mut builder = StringBuilder::create()
+
+    for byte in bytes.iterator() {
+        builder.append(byte)
+    }
+
+    return builder.to_string()
+}

@@ -1,0 +1,37 @@
+import reader
+
+function main() {
+    mut frequency: i32 = 0
+    mut seen: [i32:bool] = [:]
+    mut found = false
+
+    while true {
+        for change in reader::lines_string(day: 1).iterator() {
+            mut number = change.substring(start: 1, length: change.length()-1).to_int()
+
+            if number.has_value() {
+                match change.substring(start: 0, length: 1) {
+                    "+" => { 
+                        frequency += number!
+                    }
+                    else => {
+                        frequency -= number!
+                    }
+                }
+            }
+
+            if seen.contains(frequency) {
+                found = true
+                break
+            }
+
+            seen[frequency] = true
+        }
+
+        if found {
+            break
+        }
+    }
+
+    println("{}", frequency)
+}

@@ -1,0 +1,22 @@
+import reader
+
+function main() {
+    mut frequency: i32 = 0
+
+    for change in reader::lines(day: 1).iterator() {
+        mut number = change.substring(start: 1, length: change.length()-1).to_int()
+
+        if number.has_value() {
+            match change.substring(start: 0, length: 1) {
+                "+" => { 
+                    frequency += number!
+                }
+                else => {
+                    frequency -= number!
+                }
+            }
+        }   
+    }
+
+    println("{}", frequency)
+}
