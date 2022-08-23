@@ -1,6 +1,6 @@
-function lines_int(day: i64) throws -> [i32] {
+function lines_int(day: i64, examples: bool = false) throws -> [i32] {
     mut lines_int: [i32] = []
-    let lines_string = read_input(day).split('\n')
+    let lines_string = read_input(day, examples).split('\n')
     
     for line in lines_string.iterator() {
         let number = line.to_int()
@@ -13,12 +13,17 @@ function lines_int(day: i64) throws -> [i32] {
     return lines_int;
 }
 
-function lines_string(day: i64) throws -> [String] {
-    return read_input(day).split('\n')
+function lines_string(day: i64, examples: bool = false) throws -> [String] {
+    return read_input(day, examples).split('\n')
 }
 
-function read_input(day: i64) throws -> String {
-    let path = format("input/{}", day)
+function read_input(day: i64, examples: bool) throws -> String {
+    let folder = match examples {
+        true => "examples"
+        else => "input"
+    }
+
+    let path = format("{}/{}", folder, day)
     mut file = File::open_for_reading(path)
     
     return bytes_to_string(file.read_all())
