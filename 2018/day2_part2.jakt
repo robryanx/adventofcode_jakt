@@ -1,0 +1,44 @@
+import reader
+import utility
+
+function same(anon box_a: [u8], anon box_b: [u8]) throws -> [u8] {
+    mut same: [u8] = []
+
+    mut unmatched = 0u8
+    for (i, char_) in box_a.enumerate() {
+        if box_a[i] == box_b[i] {
+            same.push(box_a[i])
+        } else {
+            unmatched++
+
+            if unmatched > 1 {
+                return same
+            }
+        }
+    }
+
+    return same
+}
+
+function main() {
+    mut boxes_parsed: [[u8]] = []
+
+    for boxes in reader::lines_string(day: 2).iterator() {
+        boxes_parsed.push(utility::string_to_char_array(boxes))
+    }
+
+    for (i, box) in boxes_parsed.enumerate() {
+        for (j, match_box) in boxes_parsed.enumerate() {
+            if i == j {
+                continue
+            }
+
+            let same_chars = same(box, match_box)
+            if same_chars.size() == box.size() - 1 {
+                println("{}", utility::char_array_to_string(same_chars))
+
+                return 1
+            }
+        }
+    }
+}

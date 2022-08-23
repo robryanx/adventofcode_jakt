@@ -1,10 +1,41 @@
 import reader
+import utility
 
 function main() {
+    mut twice_count = 0
+    mut thrice_count = 0
+
     for boxes in reader::lines_string(day: 2).iterator() {
-        let ids = boxes.split('')
+        let ids = utility::string_to_char_array(boxes)
+        mut letter_count: [u8:i64] = [:]
+
+        mut current_twice_count = 0
+        mut current_thrice_count = 0
         for id in ids.iterator() {
-            println("{}", id)
-        } 
+            if letter_count.contains(id) {
+                letter_count[id]++
+
+                if letter_count[id] == 2 {
+                    current_twice_count++
+                } else if letter_count[id] == 3 {
+                    current_twice_count--
+                    current_thrice_count++
+                } else if letter_count[id] == 4 {
+                    current_thrice_count--
+                }
+            } else {
+                letter_count[id] = 1
+            }
+        }
+
+        if current_twice_count > 0 {
+            twice_count++
+        }
+
+        if current_thrice_count > 0 {
+            thrice_count++
+        }
     }
+
+    println("{}", twice_count * thrice_count)
 }
