@@ -16,3 +16,19 @@ function char_array_to_string(anon char_arr: [u8]) throws -> String {
 
     return sb.to_string()
 }
+
+function sort<T>(mut values: [T], sorter: function(anon item_a: T, anon item_b: T) -> i8) {
+    mut i = 0uz
+    while i < values.size() - 1 {
+        mut j = 0uz
+        while j < values.size() - i - 1 {
+            if sorter(values[j], values[j + 1]) > 0 {
+                let tmp = values[j]
+                values[j] = values[j + 1]
+                values[j + 1] = tmp
+            }
+            ++j
+        }
+        ++i
+    }
+}

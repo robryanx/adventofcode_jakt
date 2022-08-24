@@ -1,0 +1,108 @@
+import reader
+import utility
+
+function parse_event(event: String) throws -> ([i32], String) {
+    let date_event = event.split(']')
+    let date = date_event[0].substring(start: 1, length: date_event[0].length()-1)
+    let event = date_event[1].substring(start: 1, length: date_event[1].length()-1)
+
+    let date_time = date.split(' ')
+    let date_parts = date_time[0].split('-')
+    let time_parts = date_time[1].split(':')
+
+    return ([
+        date_parts[0].to_int()!
+        date_parts[1].to_int()!
+        date_parts[2].to_int()!
+        time_parts[0].to_int()!
+        time_parts[1].to_int()!
+    ], event)
+}
+
+function build_guard_sleeping(events: [([i32], String)]) throws -> ([i32:[i32:i32]], [i32:i32]) {
+    mut guards_sleeping_minutes: [i32:[i32:i32]] = [:]
+    mut guards_sleeping_total: [i32:i32] = [:]
+    mut current_guard = 0i32
+    mut current_sleep_start = -1i32
+    for event in events.iterator() {
+        match event.1.substring(start: 0, length: 5) {
+            "Guard" => {
+                current_guard = event.1.split('#')[1].split(' ')[0].to_int()!
+            }
+            "falls" => {
+                current_sleep_start = event.0[4]
+            }
+            "wakes" => {
+                if not guards_sleeping_minutes.contains(current_guard) {
+                    guards_sleeping_minutes[current_guard] = [:]
+                    guards_sleeping_total[current_guard] = 0
+                }
+
+                guards_sleeping_total[current_guard] += event.0[4] - current_sleep_start
+
+                for i in current_sleep_start..event.0[4] {
+                    if not guards_sleeping_minutes[current_guard].contains(i) {
+                        guards_sleeping_minutes[current_guard][i] = 0
+                    }
+
+                    guards_sleeping_minutes[current_guard][i]++
+                }
+
+                current_sleep_start = -1i32
+            }
+            else => {}
+        }
+    }
+
+    return (guards_sleeping_minutes, guards_sleeping_total)
+}
+
+function largest(anon collection: [i32:i32]) throws -> i32 {
+    mut current_largest = -1i32
+    mut current_largest_key = -1i32
+    for key in collection.keys().iterator() {
+        if collection[key] > current_largest {
+            current_largest = collection[key]
+            current_largest_key = key
+        }
+    }
+
+    return current_largest_key
+}
+
+function main() {
+    mut events: [([i32], String)] = [] 
+
+    for event in reader::lines_string(day: 4).iterator() {
+        events.push(parse_event(event))        
+    }
+
+    utility::sort(values: events, sorter: function(anon item_a: ([i32], String), anon item_b: ([i32], String)) -> i8 {
+        for i in 0..5 {
+            if item_a.0[i] > item_b.0[i] {
+                return 1
+            } else if item_a.0[i] < item_b.0[i] {
+                return -1
+            }
+        }
+
+        return 0
+    })
+
+    mut (guards_sleeping_minutes, guards_sleeping_total) = build_guard_sleeping(events)
+
+    mut minute_guard = -1i32
+    mut minute_count = -1i32
+    mut minute_minute = -1i32
+    for guard_ in guards_sleeping_minutes.keys().iterator() {
+        let guard_minute = largest(guards_sleeping_minutes[guard_])
+
+        if guards_sleeping_minutes[guard_][guard_minute] > minute_count {
+            minute_guard = guard_
+            minute_count = guards_sleeping_minutes[guard_][guard_minute]
+            minute_minute = guard_minute
+        }
+    }   
+
+    println("{}", minute_guard * minute_minute)
+}
