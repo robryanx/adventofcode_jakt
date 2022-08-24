@@ -1,0 +1,96 @@
+import reader
+
+function previous_char(chars: &[u8], current: usize) -> usize {
+    if current > 0 {
+        let previous = current - 1
+        for i in previous..0 {
+            if chars[i] != 0 {
+                return i
+            }
+        }
+    }    
+
+    return 0
+}
+
+function next_char(chars: &[u8], current: usize) -> usize {
+    let next = current + 1
+    if next < chars.size() {
+        for i in next..chars.size() {
+            if chars[i] != 0 {
+                return i
+            }
+        }
+    }
+
+    return 0
+}
+
+function count_chars(chars: &[u8]) -> i32 {
+    mut count = 0i32
+    for char_ in chars.iterator() {
+        if char_ != 0 {
+            count++
+        }
+    }
+
+    return count
+}
+
+function remove_char(chars: [u8], char_: u8) throws -> [u8] {
+    mut chars_removed = chars
+
+    for i in 0..chars.size() {
+        if chars[i] == char_ or chars[i] == char_ + 32 {
+            chars_removed[i] = 0
+        }
+    }
+
+    return chars_removed
+}
+
+function main() {
+    mut chars_base = reader::chars(day: 5)
+
+    mut start = 0uz
+    mut ended = false
+
+    mut lowest_count = 100000i32
+
+    for z in 65..91 {
+        mut chars = remove_char(chars: chars_base[..].to_array(), char_: z as! u8)
+
+        loop {
+            mut i = 0uz
+            while i < chars.size() {
+                let char_ = chars[i]
+                let next = next_char(&chars, current: i)
+                if next != 0 {
+                    if (char_ > chars[next] and char_ - chars[next] == 32) or
+                        (chars[next] > char_ and chars[next] - char_ == 32) {
+                        chars[i] = 0
+                        chars[next] = 0
+
+                        i = previous_char(&chars, current: i)
+                    } else {
+                        i = next
+                    }
+                } else {
+                    ended = true
+                    break
+                }
+            }
+
+            if ended {
+                break
+            }
+        }
+
+        let count = count_chars(&chars)
+        if count < lowest_count {
+            lowest_count = count
+        }
+    }
+    
+    println("{}", lowest_count)
+}

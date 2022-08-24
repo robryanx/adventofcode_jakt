@@ -1,3 +1,5 @@
+import utility
+
 function lines_int(day: i64, examples: bool = false) throws -> [i32] {
     mut lines_int: [i32] = []
     let lines_string = read_input(day, examples).split('\n')
@@ -15,6 +17,10 @@ function lines_int(day: i64, examples: bool = false) throws -> [i32] {
 
 function lines_string(day: i64, examples: bool = false) throws -> [String] {
     return read_input(day, examples).split('\n')
+}
+
+function chars(day: i64, examples: bool = false) throws -> [u8] {
+    return utility::string_to_char_array(read_input(day, examples))
 }
 
 function read_input(day: i64, examples: bool) throws -> String {
