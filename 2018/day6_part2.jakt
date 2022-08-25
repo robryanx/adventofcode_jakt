@@ -1,0 +1,46 @@
+import reader
+import utility
+
+function distance_to_coordinates(coordinates: [(u32, u32, usize)], x: u32, y: u32) -> i64 {
+    mut total_distance = 0
+    for coordinate in coordinates.iterator() {
+        total_distance += utility::abs(coordinate.0 as! i64 - x as !i64)
+        total_distance += utility::abs(coordinate.1 as! i64 - y as !i64)
+    }
+
+    return total_distance
+}
+
+function main() {
+    mut coordinates: [(u32, u32, usize)] = []
+
+    mut x_bound = 0u32
+    mut y_bound = 0u32
+    for (id, coord_str) in utility::Enumerator(index: 0, iterator: reader::lines_string(day: 6).iterator()) {
+        let coord_parts = coord_str.split(',')
+        let x = coord_parts[0].to_uint()!
+        let y = coord_parts[1].substring(start: 1, length: coord_parts[1].length() - 1).to_uint()!
+
+        coordinates.push((x, y, id))
+
+        if x > x_bound {
+            x_bound = x
+        }
+
+        if y > y_bound {
+            y_bound = y
+        }
+    }
+
+    mut points = 0
+    for y in 0..y_bound {
+        for x in 0..x_bound {
+            let distance = distance_to_coordinates(coordinates, x, y)
+            if distance < 10000 {
+                points++
+            }
+        }
+    }
+
+    println("{}", points)
+}

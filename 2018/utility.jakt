@@ -32,3 +32,28 @@ function sort<T>(mut values: [T], sorter: function(anon item_a: T, anon item_b: 
         ++i
     }
 }
+
+function abs(anon number: i64) -> i64 {
+    if number < 0 {
+        return number * -1
+    }
+
+    return number
+}
+
+struct Enumerator<T> {
+    index: usize
+    iterator: ArrayIterator<T>
+
+    function next(mut this) -> (usize, T)? {
+        .index++
+
+        let item: T? = .iterator.next()
+        if item.has_value() {
+            let ret: (usize, T) = (.index - 1, item!)
+            return Some(ret)
+        } else {
+            return None
+        }
+    }
+}

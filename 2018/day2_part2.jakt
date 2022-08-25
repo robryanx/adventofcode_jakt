@@ -5,7 +5,7 @@ function same(anon box_a: [u8], anon box_b: [u8]) throws -> [u8] {
     mut same: [u8] = []
 
     mut unmatched = 0u8
-    for (i, char_) in box_a.enumerate() {
+    for (i, char_) in utility::Enumerator(index: 0, iterator: box_a.iterator()) {
         if box_a[i] == box_b[i] {
             same.push(box_a[i])
         } else {
@@ -27,8 +27,8 @@ function main() {
         boxes_parsed.push(utility::string_to_char_array(boxes))
     }
 
-    for (i, box) in boxes_parsed.enumerate() {
-        for (j, match_box) in boxes_parsed.enumerate() {
+    for (i, box) in utility::Enumerator(index: 0, iterator: boxes_parsed.iterator()) {
+        for (j, match_box) in utility::Enumerator(index: 0, iterator: boxes_parsed.iterator()) {
             if i == j {
                 continue
             }

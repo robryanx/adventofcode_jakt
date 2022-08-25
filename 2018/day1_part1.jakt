@@ -3,7 +3,7 @@ import reader
 function main() {
     mut frequency: i32 = 0
 
-    for change in reader::lines(day: 1).iterator() {
+    for change in reader::lines_string(day: 1).iterator() {
         mut number = change.substring(start: 1, length: change.length()-1).to_int()
 
         if number.has_value() {
