@@ -48,6 +48,28 @@ function sort<T>(mut values: [T], sorter: &function(anon item_a: T, anon item_b:
     }
 }
 
+function array_remove(arr: [String], remove_str: String) throws -> [String] {
+    mut new_array: [String] = []
+
+    for str_ in arr.iterator() {
+        if str_ != remove_str {
+            new_array.push(str_)
+        }
+    }
+
+    return new_array
+}
+
+function array_join<T>(arr: [T]) throws -> String {
+    mut sb = StringBuilder::create()
+
+    for item in arr.iterator() {
+        sb.append_string(format("{}", item))
+    }
+    
+    return sb.to_string()
+}
+
 function abs(anon number: i64) -> i64 {
     if number < 0 {
         return number * -1
