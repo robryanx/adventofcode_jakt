@@ -16,7 +16,7 @@ function main() {
 
     mut x_bound = 0u32
     mut y_bound = 0u32
-    for (id, coord_str) in utility::Enumerator(index: 0, iterator: reader::lines_string(day: 6).iterator()) {
+    for (id, coord_str) in utility::enumerate(reader::lines_string(day: 6).iterator()) {
         let coord_parts = coord_str.split(',')
         let x = coord_parts[0].to_uint()!
         let y = coord_parts[1].substring(start: 1, length: coord_parts[1].length() - 1).to_uint()!

@@ -94,3 +94,10 @@ struct Enumerator<T> {
         }
     }
 }
+
+function enumerate<T>(anon iterator: ArrayIterator<T>) {
+    return utility::Enumerator(
+        index: 0
+        iterator
+    )
+}

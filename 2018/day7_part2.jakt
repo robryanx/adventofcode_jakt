@@ -48,7 +48,7 @@ function main() {
     mut second = 0i32
 
     loop {
-        for (i, status) in utility::Enumerator(index: 0, iterator: workers.iterator()) {
+        for (i, status) in utility::enumerate(iterator: workers.iterator()) {
             if status.0.length() != 0 && second == status.1 {
                 remove_visited(dependancies, visit: status.0)
 
@@ -72,7 +72,7 @@ function main() {
 
         sort_can_visit(can_visit)
 
-        for (i, status) in utility::Enumerator(index: 0, iterator: workers.iterator()) {
+        for (i, status) in utility::enumerate(workers.iterator()) {
             if status.0.length() == 0 and can_visit.size() > 0 {
                 let visit = can_visit.pop()!
                 in_process.push(visit)
