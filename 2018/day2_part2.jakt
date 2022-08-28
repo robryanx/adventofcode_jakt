@@ -1,3 +1,6 @@
+/// Expect:
+/// - output: "ymdrchgpvwfloluktajxijsqb\n"
+
 import reader
 import utility
 

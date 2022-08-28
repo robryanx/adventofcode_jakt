@@ -1,3 +1,6 @@
+/// Expect:
+/// - output: "10250\n"
+
 import reader
 
 function previous_char(chars: &[u8], current: usize) -> usize {

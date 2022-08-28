@@ -1,3 +1,6 @@
+/// Expect:
+/// - output: "77666\n"
+
 import reader
 
 function main() {

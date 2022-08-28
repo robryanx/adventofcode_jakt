@@ -1,3 +1,6 @@
+/// Expect:
+/// - output: "65489\n"
+
 import reader
 import utility
 
