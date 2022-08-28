@@ -77,7 +77,7 @@ function main() {
         events.push(parse_event(event))        
     }
 
-    utility::sort(values: events, sorter: function(anon item_a: ([i32], String), anon item_b: ([i32], String)) -> i8 {
+    utility::sort(values: events, sorter: &function(anon item_a: ([i32], String), anon item_b: ([i32], String)) -> i8 {
         for i in 0..5 {
             if item_a.0[i] > item_b.0[i] {
                 return 1
