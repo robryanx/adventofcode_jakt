@@ -1,8 +1,8 @@
 import utility
 
-function lines_int(day: i64, examples: bool = false) throws -> [i32] {
+function lines_int(day: i64, examples: bool = false, separator: c_char = '\n') throws -> [i32] {
     mut lines_int: [i32] = []
-    let lines_string = read_input(day, examples).split('\n')
+    let lines_string = read_input(day, examples).split(separator)
     
     for line in lines_string.iterator() {
         let number = line.to_int()
