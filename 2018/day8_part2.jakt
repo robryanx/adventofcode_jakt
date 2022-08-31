@@ -1,0 +1,70 @@
+/// Expect:
+/// - output: "22198\n"
+
+import utility
+import reader
+
+class Node {
+    public child_nodes: [Node]
+    public metadata: [i32]
+}
+
+function parse_node(anon node_values: [i32], mut node: Node) throws -> i32 {
+    let child_node_count = node_values[0]
+    let metadata_count = node_values[1]
+
+    mut child_nodes: [Node] = []
+    mut count = 0i32
+
+    mut i = 0i32
+    mut start = 2i32
+    
+    while i < child_node_count {
+        mut new_node = Node(
+            child_nodes: [],
+            metadata: []
+        )
+
+        let add_count = parse_node(node_values[start..].to_array(), node: new_node)
+        
+        node.child_nodes.push(new_node)
+
+        start += add_count
+        count += add_count
+        i++
+    }
+
+    node.metadata = node_values[start..start+metadata_count].to_array()
+
+    return metadata_count + count + 2
+}
+
+function count_metadata(node: Node) -> i32 {
+    mut count = 0i32
+    if node.child_nodes.size() == 0 {
+        for data in node.metadata.iterator() {
+            count += data
+        }
+    } else {
+        for data in node.metadata.iterator() {
+            if data > 0 and data as! usize <= node.child_nodes.size() {
+                count += count_metadata(node: node.child_nodes[data-1])
+            } 
+        }
+    }
+
+    return count
+}
+
+function main() {
+    let node_values = reader::lines_int(day: 8, separator: ' ')
+
+    mut node = Node(
+        child_nodes: [],
+        metadata: []
+    )
+    
+    let count = parse_node(node_values, node)
+
+    println("{}", count_metadata(node))
+}
