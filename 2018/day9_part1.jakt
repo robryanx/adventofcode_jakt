@@ -1,0 +1,96 @@
+/// Expect:
+/// - output: "424639\n"
+
+import reader
+import utility
+
+class Marble {
+    public previous: Marble?
+    public next: Marble?
+    public value: i32
+}
+
+function add_marble(mut current: Marble, value: i32) throws -> Marble {
+    for i in 0..2 {
+        current = current.next!
+    }
+
+    let new_marble = Marble(
+        previous: current.previous
+        next: current
+        value
+    )
+
+    current.previous!.next = new_marble
+    current.previous = new_marble
+
+    return new_marble
+}
+
+function player_score(mut current: Marble) throws -> (Marble, i32) {
+    for i in 0..7 {
+        current = current.previous!
+    }
+
+    let score = current.value
+
+    mut previous = current.previous
+    previous!.next = current.next
+    mut next = current.next
+    next!.previous = previous
+
+    return (current.next!, score)
+}
+
+function main() {
+    let values = reader::lines_string(day: 9)[0].split(' ')
+
+    let players = values[0].to_int()! as !usize
+    let marbles = values[6].to_int()!
+
+    mut player_scores: [usize:i32] = [:]
+
+    mut current = Marble(
+        previous: None,
+        next: None
+        value: 1
+    )
+
+    current.previous = current
+    current.next = current
+
+    mut current_player = 2uz
+
+    for marble in 1..(marbles + 1) {
+        if marble % 23 == 0 {
+            let update = player_score(current)
+
+            current = update.0
+
+            if not player_scores.contains(current_player) {
+                player_scores[current_player] = 0
+            }
+
+            player_scores[current_player] += update.1 + marble
+        } else {
+            current = add_marble(current, value: marble)
+        }
+
+        current_player = (current_player + 1) % (players + 1)
+        if current_player == 0 {
+            current_player++
+        }
+    }
+
+    mut high_score_player = 0uz
+    mut high_score = 0i32
+
+    for (player, score) in player_scores.iterator() {
+        if score > high_score {
+            high_score = score
+            high_score_player = player
+        }
+    }
+
+    println("{}", high_score)
+}
