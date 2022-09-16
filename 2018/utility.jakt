@@ -134,7 +134,7 @@ struct Enumerator<T> {
     }
 }
 
-function enumerate<T>(anon iterator: ArrayIterator<T>) {
+function enumerate<T>(anon iterator: ArrayIterator<T>) -> Enumerator<T> {
     return Enumerator(
         index: 0
         iterator
