@@ -78,7 +78,7 @@ function expand(mut coords: [u32:[u32:[(usize, usize)]]], id: usize, x: u32, y:u
     }
 
     if coords[y][x].size() > 0 {
-        utility::sort(values: coords[y][x], sorter: &function(anon item_a: (usize, usize), anon item_b: (usize, usize)) -> i8 {
+        utility::sort(values: coords[y][x], sorter: &function(anon item_a: &(usize, usize), anon item_b: &(usize, usize)) -> i8 {
             if item_a.1 > item_b.1 {
                 return 1
             } else if item_a.1 < item_b.1 {
@@ -101,7 +101,7 @@ function expand(mut coords: [u32:[u32:[(usize, usize)]]], id: usize, x: u32, y:u
     }
 
     if coords[y][x].size() > 1 {
-        utility::sort(values: coords[y][x], sorter: &function(anon item_a: (usize, usize), anon item_b: (usize, usize)) -> i8 {
+        utility::sort(values: coords[y][x], sorter: &function(anon item_a: &(usize, usize), anon item_b: &(usize, usize)) -> i8 {
             if item_a.1 > item_b.1 {
                 return 1
             } else if item_a.1 < item_b.1 {
