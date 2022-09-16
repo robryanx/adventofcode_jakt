@@ -1,0 +1,146 @@
+/// Expect:
+/// - output: "10086\n"
+
+import reader
+import utility
+
+struct CurrentPosition {
+    x: i32
+    y: i32
+}
+
+struct Velocity {
+    x: i32
+    y: i32
+}
+
+class Point {
+    public current_position: CurrentPosition
+    public velocity: Velocity
+}
+
+function main() {
+    mut points: [Point] = []
+
+    for line in reader::lines_string(day: 10).iterator() {
+        let numbers = utility::format_match(line, format: "position=< %,  %> velocity=< %,  %>")
+
+        if numbers.has_value() and numbers!.size() == 4 {
+            let point = Point(
+                current_position: CurrentPosition(
+                    x: numbers![0]
+                    y: numbers![1]
+                )
+                velocity: Velocity(
+                    x: numbers![2]
+                    y: numbers![3]
+                )
+            )
+
+            points.push(point)
+        }
+    }
+
+    mut last_canvas_size: i64? = None
+    for i in 0..100000 {
+        for point in points.iterator() {
+            point.current_position.x += point.velocity.x
+            point.current_position.y += point.velocity.y
+        }
+
+        let canvas_size = get_canvas_size(points)
+        if not last_canvas_size.has_value() {
+            last_canvas_size = canvas_size
+        } else if canvas_size.has_value() {
+            if canvas_size! > last_canvas_size! {
+                // go back 1 iteration and print
+                for point in points.iterator() {
+                    point.current_position.x -= point.velocity.x
+                    point.current_position.y -= point.velocity.y
+                }
+
+                println("{}", i)
+
+                break
+            } else {
+                last_canvas_size = canvas_size
+            }
+        }
+    }
+}
+
+function get_canvas_size(points: [Point]) throws -> i64? {
+    mut plot: [i32:[i32:i32]] = [:]
+
+    mut min_x: i32? = None
+    mut min_y: i32? = None
+    mut max_y: i32? = None
+    mut max_x: i32? = None
+
+    for point in points.iterator() {
+        if not min_x.has_value() or point.current_position.x < min_x! {
+            min_x = point.current_position.x
+        }
+        if not min_y.has_value() or point.current_position.y < min_y! {
+            min_y = point.current_position.y
+        }
+        if not max_x.has_value() or point.current_position.x > max_x! {
+            max_x = point.current_position.x
+        }
+        if not max_y.has_value() or point.current_position.y > max_y! {
+            max_y = point.current_position.y
+        }
+    }
+
+    if (max_x! - min_x!) < 2000 and (max_y! - min_y!) < 2000 {
+        return Some(((max_x! - min_x!) * (max_y! - min_y!)) as! i64)
+    }
+
+    return None
+}
+
+function print_points(points: [Point]) throws {
+    mut min_x: i32? = None
+    mut min_y: i32? = None
+    mut max_y: i32? = None
+    mut max_x: i32? = None
+
+    mut plot: [i32:[i32:i32]] = [:]
+
+    for point in points.iterator() {
+        if not min_x.has_value() or point.current_position.x < min_x! {
+            min_x = point.current_position.x
+        }
+        if not min_y.has_value() or point.current_position.y < min_y! {
+            min_y = point.current_position.y
+        }
+        if not max_x.has_value() or point.current_position.x > max_x! {
+            max_x = point.current_position.x
+        }
+        if not max_y.has_value() or point.current_position.y > max_y! {
+            max_y = point.current_position.y
+        }
+
+        if not plot.contains(point.current_position.x) {
+            plot[point.current_position.x] = [:]
+        }
+
+        plot[point.current_position.x][point.current_position.y] = 1
+    }
+    
+    for y in min_y!..max_y!+1 {
+        for x in min_x!..max_x!+1 {
+            if plot.contains(x) {
+                if plot[x].contains(y) {
+                    print("#")
+                } else {
+                    print(".")
+                }
+            } else {
+                print(".")
+            }
+        }
+
+        print("\n")
+    }
+}
