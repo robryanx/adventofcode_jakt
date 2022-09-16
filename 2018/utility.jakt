@@ -1,3 +1,5 @@
+/// Expect: Skip
+
 function string_to_char_array(anon str: String) throws -> [u8] {
     mut chars: [u8] = []
     for i in ..str.length() {
