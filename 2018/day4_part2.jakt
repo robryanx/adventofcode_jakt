@@ -30,7 +30,10 @@ function build_guard_sleeping(events: [([i32], String)]) throws -> ([i32:[i32:i3
     for event in events.iterator() {
         match event.1.substring(start: 0, length: 5) {
             "Guard" => {
-                current_guard = event.1.split('#')[1].split(' ')[0].to_int()!
+                let guards = utility::format_match(line: event.1, format: "Guard #%")
+                if guards.has_value() {
+                    current_guard = guards![0]
+                }
             }
             "falls" => {
                 current_sleep_start = event.0[4]
@@ -80,7 +83,7 @@ function main() {
         events.push(parse_event(event))        
     }
 
-    utility::sort(values: events, sorter: function(anon item_a: ([i32], String), anon item_b: ([i32], String)) -> i8 {
+    utility::sort(values: events, sorter: function(anon item_a: &([i32], String), anon item_b: &([i32], String)) -> i8 {
         for i in 0..5 {
             if item_a.0[i] > item_b.0[i] {
                 return 1

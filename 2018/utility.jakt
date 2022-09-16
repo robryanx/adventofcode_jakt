@@ -78,6 +78,43 @@ function abs(anon number: i64) -> i64 {
     return number
 }
 
+function is_number_part(anon c: u8) -> bool => (c >= b'0' and c <= b'9') or c == b'-'
+
+function format_match(mut line: String, mut format: String) throws -> [i32]? {
+    line = line.replace(replace: " ", with: "")
+    format = format.replace(replace: " ", with: "")
+
+    mut numbers: [i32] = []
+    mut current_number = StringBuilder::create()
+    mut line_pos = 0uz
+    for i in ..format.length() {
+        if format.byte_at(i) == b'%' {
+            while(is_number_part(line.byte_at(line_pos))) {
+                current_number.append(line.byte_at(line_pos))
+
+                line_pos++
+            }
+
+            let candidate = current_number.to_string()
+            if candidate.length() > 0 {
+                let to_int = candidate.to_int()
+                if to_int.has_value() {
+                    numbers.push(to_int!)
+                    current_number.clear()
+                } else {
+                    return None
+                }
+            } else {
+                return None
+            }
+        } else {
+            line_pos++
+        }
+    }
+
+    return numbers
+}
+
 struct Enumerator<T> {
     index: usize
     iterator: ArrayIterator<T>
