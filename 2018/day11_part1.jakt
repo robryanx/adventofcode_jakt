@@ -1,0 +1,55 @@
+/// Expect:
+/// - output: "243,64\n"
+
+function main() {
+    let serial_number = 5468
+
+    mut power_grid: [i16:[i16:i8]] = [:]
+
+    for x in 1i16..301i16 {
+        for y in 1i16..301i16 {
+            let rack_id = (x as! i64) + 10
+            let power_level = ((rack_id * (y as! i64)) + serial_number) * rack_id
+
+            mut hundreds_digit = 0u8
+            if power_level > 100 {
+                let digits = format("{}", power_level)
+                hundreds_digit = digits.byte_at(digits.length() - 3) - 48
+            }
+
+            let final_power_level = (hundreds_digit as! i8) - 5
+
+            if not power_grid.contains(x) {
+                power_grid[x] = [:]
+            }
+
+            power_grid[x][y] = final_power_level
+        }
+    }
+
+    mut largest_x_coord = 0i16
+    mut largest_y_coord = 0i16
+    mut largest_amount = 0
+
+    for x in 1i16..301i16-3i16 {
+        for y in 1i16..301i16-3i16 {
+            let amount: i64 = power_grid[x][y] + 
+                power_grid[x+1][y] + 
+                power_grid[x+2][y] + 
+                power_grid[x][y+1] + 
+                power_grid[x+1][y+1] + 
+                power_grid[x+2][y+1] + 
+                power_grid[x][y+2] + 
+                power_grid[x+1][y+2] + 
+                power_grid[x+2][y+2]
+
+            if amount > largest_amount {
+                largest_amount = amount
+                largest_x_coord = x
+                largest_y_coord = y
+            }
+        }
+    }
+
+    println("{},{}", largest_x_coord, largest_y_coord)
+}

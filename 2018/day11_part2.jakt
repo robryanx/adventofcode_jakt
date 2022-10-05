@@ -1,0 +1,66 @@
+/// Expect:
+/// - output: "90,101,15\n"
+
+function main() {
+    let serial_number = 5468
+    let grid_size = 301i16
+
+    mut power_grid: [i16:[i16:i8]] = [:]
+
+    for x in 1i16..grid_size {
+        for y in 1i16..grid_size {
+            let rack_id = (x as! i64) + 10
+            let power_level = ((rack_id * (y as! i64)) + serial_number) * rack_id
+
+            mut hundreds_digit = 0u8
+            if power_level > 100 {
+                let digits = format("{}", power_level)
+                hundreds_digit = digits.byte_at(digits.length() - 3) - 48
+            }
+
+            let final_power_level = (hundreds_digit as! i8) - 5
+
+            if not power_grid.contains(x) {
+                power_grid[x] = [:]
+            }
+
+            power_grid[x][y] = final_power_level
+        }
+    }
+
+    mut largest_x_coord = 0i16
+    mut largest_y_coord = 0i16
+    mut largest_size = 0i16
+    mut largest_amount = 0
+
+    for x in 1i16..grid_size {
+        for y in 1i16..grid_size {
+            mut max_size = grid_size - x
+            if grid_size - y < max_size {
+                max_size = grid_size - y
+            }
+
+            mut amount = power_grid[x][y] as! i64
+            if max_size > 1 {
+                for size in 2..max_size {
+                    for y_s in 0..size {
+                        amount += power_grid[x+size-1][y+y_s] as! i64
+                    }
+
+                    for x_s in 0..size-1 {
+                        amount += power_grid[x+x_s][y+size-1] as! i64
+                    }
+
+                    if amount > largest_amount {
+                        largest_x_coord = x
+                        largest_y_coord = y
+                        largest_size = size
+                        largest_amount = amount
+                    }
+                }
+            }
+        }
+    }
+
+    println("{},{},{}", largest_x_coord, largest_y_coord, largest_size)
+}
