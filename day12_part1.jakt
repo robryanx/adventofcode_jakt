@@ -1,0 +1,111 @@
+/// Expect:
+/// - output: "1733\n"
+
+import reader
+import utility
+
+struct Rule {
+    pattern: [bool]
+    result: bool
+}
+
+function main() {
+    mut rules: [Rule] = []
+    mut current_state: [bool] = []
+    mut start_offset = 0uz
+
+    for (i, line) in utility::enumerate(reader::lines_string(day: 12).iterator()) {
+        if i == 0 {
+            let state_string = line.replace(replace: "initial state: ", with: "")
+            current_state = [false;state_string.length()*3]
+            
+            start_offset = state_string.length()
+
+            mut offset = start_offset
+            for char_ in utility::string_to_char_array(state_string) {
+                current_state[offset] = match char_ {
+                    b'#' => true
+                    else => false
+                }
+                offset++
+            }
+        } else {
+            let line_parts = line.split(' ')
+
+            mut current_pattern: [bool] = []
+            for char_ in utility::string_to_char_array(line_parts[0]) {
+                current_pattern.push(match char_ {
+                    b'#' => true
+                    else => false
+                })
+            }
+
+            rules.push(Rule(
+                pattern: current_pattern
+                result: match line_parts[2].byte_at(0) {
+                    b'#' => true
+                    else => false
+                }
+            ))
+        }
+    }
+
+    for i in 0..20 {
+        current_state = apply_rules(current_state, rules)
+    }
+
+    println("{}", score_state(current_state, start_offset))
+}
+
+function apply_rules(current_state: [bool], rules: [Rule]) throws -> [bool] {
+    mut new_state: [bool] = [false;current_state.size()]
+
+    for i in 0..current_state.size() {
+        for rule in rules {
+            if i + rule.pattern.size() > current_state.size() {
+                continue
+            }
+
+            mut found = true
+            for j in i..(i + rule.pattern.size()) {
+                if current_state[j] != rule.pattern[j-i] {
+                    found = false
+                    break
+                }
+            }
+
+            if found {
+                let mid_point = i + (rule.pattern.size() / 2)
+
+                new_state[mid_point] = rule.result
+            }
+        }
+    }
+
+    return new_state
+}
+
+function score_state(current_state: [bool], start_offset: usize) -> i64 {
+    print_state(current_state, start_offset)
+
+    mut total = 0
+    for i in 0..current_state.size() {
+        if current_state[i] {
+            total += (i as !i64 - start_offset as! i64 )
+        }
+    }
+
+    return total
+}
+
+function print_state(current_state: [bool], start_offset: usize) {
+    for i in 0..current_state.size() {
+        print("({}|" (i as !i64 - start_offset as !i64))
+        if current_state[i] {
+            print("#)")
+        } else {
+            print(".)")
+        }
+    }
+    println("")
+}

@@ -1,0 +1,155 @@
+/// Expect:
+/// - output: "1000000000508\n"
+
+import reader
+import utility
+
+struct Rule {
+    pattern: [bool]
+    result: bool
+}
+
+function main() {
+    mut rules: [Rule] = []
+    mut initial_state: [bool] = []
+    mut state_offset = -4
+
+    for (i, line) in utility::enumerate(reader::lines_string(day: 12).iterator()) {
+        if i == 0 {
+            let state_string = line.replace(replace: "initial state: ", with: "")
+            initial_state = [false;state_string.length()+8]
+            
+            mut offset = 4
+            for char_ in utility::string_to_char_array(state_string) {
+                initial_state[offset] = match char_ {
+                    b'#' => true
+                    else => false
+                }
+                offset++
+            }
+        } else {
+            let line_parts = line.split(' ')
+
+            mut current_pattern: [bool] = []
+            for char_ in utility::string_to_char_array(line_parts[0]) {
+                current_pattern.push(match char_ {
+                    b'#' => true
+                    else => false
+                })
+            }
+
+            rules.push(Rule(
+                pattern: current_pattern
+                result: match line_parts[2].byte_at(0) {
+                    b'#' => true
+                    else => false
+                }
+            ))
+        }
+    }
+
+    mut current_state = initial_state
+    mut count = 0
+    while true {
+        let (get_current_state, get_state_offest) = apply_rules(current_state, state_offset, &rules)
+
+        if state_equal(previous_state: current_state, current_state: get_current_state) {
+            let remaining = 50000000000 - count
+
+            println("{}", score_state(current_state, state_offset: state_offset+remaining))
+
+            break
+        }
+
+        current_state = get_current_state
+        state_offset = get_state_offest
+        count++
+    }
+}
+
+function state_equal(previous_state: &[bool], current_state: &[bool]) -> bool {
+    if previous_state.size() != current_state.size() {
+        return false
+    }
+
+    for i in 4..(current_state.size() - 4) {
+        if current_state[i] != previous_state[i] {
+            return false
+        }
+    }
+
+    return true
+}
+
+function apply_rules(current_state: [bool], mut state_offset: i64, rules: &[Rule]) throws -> ([bool], i64) {
+    mut new_state: [bool] = [false;current_state.size()*3]
+    mut first_true = new_state.size()
+    mut last_true = 0uz
+
+    for i in 0..current_state.size() {
+        for rule in *rules {
+            if i + rule.pattern.size() > current_state.size() {
+                continue
+            }
+
+            mut found = true
+            for j in i..(i + rule.pattern.size()) {
+                if current_state[j] != rule.pattern[j-i] {
+                    found = false
+                    break
+                }
+            }
+
+            if found {
+                let mid_point = i + (rule.pattern.size() / 2)
+
+                new_state[current_state.size() + mid_point] = rule.result
+
+                if rule.result and mid_point < first_true {
+                    first_true = mid_point
+                } else if rule.result and mid_point > last_true {
+                    last_true = mid_point
+                }
+            }
+        }
+    }
+
+    state_offset += first_true as! i64
+    state_offset -= 4
+
+    return (new_state[(current_state.size() + first_true - 4)..(current_state.size() + last_true + 5)].to_array(), state_offset)
+}
+
+function score_state(current_state: [bool], state_offset: i64) -> i64 {
+    mut total = 0
+    for i in 0..current_state.size() {
+        if current_state[i] {
+            total += (i as !i64 + state_offset)
+        }
+    }
+
+    return total
+}
+
+function print_state_base(initial_state: [bool], current_state: [bool]) {
+    for i in 4..(initial_state.size()-4) {
+        if initial_state[i] {
+            print("#")
+        } else {
+            print(".")
+        }
+    }
+
+    println("")
+
+    for i in 4..(current_state.size() - 4) {
+        if current_state[i] {
+            print("#")
+        } else {
+            print(".")
+        }
+    }
+
+    println("")
+    println("")
+}
