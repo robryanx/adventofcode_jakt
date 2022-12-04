@@ -128,8 +128,8 @@ function print_points(points: [Point]) throws {
         plot[point.current_position.x][point.current_position.y] = 1
     }
     
-    for y in min_y!..max_y!+1 {
-        for x in min_x!..max_x!+1 {
+    for y in min_y!..(max_y!+1) {
+        for x in min_x!..(max_x!+1) {
             if plot.contains(x) {
                 if plot[x].contains(y) {
                     print("#")

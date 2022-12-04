@@ -47,7 +47,7 @@ function main() {
                         amount += power_grid[x+size-1][y+y_s] as! i64
                     }
 
-                    for x_s in 0..size-1 {
+                    for x_s in 0..(size-1) {
                         amount += power_grid[x+x_s][y+size-1] as! i64
                     }
 

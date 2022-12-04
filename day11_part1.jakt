@@ -31,8 +31,8 @@ function main() {
     mut largest_y_coord = 0i16
     mut largest_amount = 0
 
-    for x in 1i16..301i16-3i16 {
-        for y in 1i16..301i16-3i16 {
+    for x in 1i16..(301i16-3i16) {
+        for y in 1i16..(301i16-3i16) {
             let amount: i64 = power_grid[x][y] + 
                 power_grid[x+1][y] + 
                 power_grid[x+2][y] + 
